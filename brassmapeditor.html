@@ -992,8 +992,25 @@ function drawConnectionsRoute(){
     ctx.beginPath();
     console.log(route);
     for (var i = 0; i < route.length; i += 1) {
-        ctx.moveTo(getCoords(route[i].from).x , getCoords(route[i].from).y);
-        ctx.lineTo(getCoords(route[i].to).x, getCoords(route[i].to).y);
+        to = getCoords(route[i].to);
+        from = getCoords(route[i].from);
+
+        tox = to.x;
+        toy = to.y;
+        fromx = from.x;
+        fromy = from.y;
+
+        var headlen = 10;   // length of head in pixels
+        var angle = Math.atan2(toy-fromy,tox-fromx);
+
+        ctx.moveTo(fromx, fromy);
+        ctx.lineTo(tox, toy);
+        ctx.lineTo(tox-headlen*Math.cos(angle-Math.PI/6),toy-headlen*Math.sin(angle-Math.PI/6));
+        ctx.moveTo(tox, toy);
+        ctx.lineTo(tox-headlen*Math.cos(angle+Math.PI/6),toy-headlen*Math.sin(angle+Math.PI/6));
+
+        ctx.moveTo(fromx , fromy);
+        ctx.lineTo(tox, toy);
     }
     ctx.stroke();
 }
