@@ -36,6 +36,11 @@ Using the editor:
 <input type="file" id="mapLoader" name="mapLoader"/> 
 </td>
 
+  <td>
+    <label><font size="2">Route:</font>&nbsp;</label>
+    <input type="file" id="routeLoader" name="routeLoader"/>
+  </td>
+
 <td>
   <center>
     <font size="2">
@@ -90,6 +95,9 @@ var imageLoader = document.getElementById('imageLoader');
 var mapLoader = document.getElementById('mapLoader');
     mapLoader.addEventListener('change', importMap, false);
 
+var routeLoader = document.getElementById('routeLoader');
+    routeLoader.addEventListener('change', importRoute, false);
+
 var canvas = document.getElementById('imageCanvas');
 var saveButton = document.getElementById("saveMap");
 var attEdit = document.getElementById("attEdit");
@@ -128,6 +136,7 @@ var IPS = 2 * grid_granularity; // Separation between initial points in grid
 var OBSTACLE_SIZE = 10 // 50/MPR; Size of obstacles
 var stations=[]; // charging stations
 var worldobstaclesx=[], worldobstaclesy=[]; // x,y obstacles 0.5x05m in world
+var route = [];
 
 // =============================================================================
 // Map querying (checking locations at x,y position, etc.)
@@ -666,6 +675,12 @@ function importMap(e){
   //render();
 }
 
+function importRoute(e){
+    var reader = new FileReader();
+    reader.onload = loadRoute(e.target.files[0]["name"]);
+    //render();
+}
+
 function getURLPath(urlStr){
 	var pathArray = urlStr.split( '/' );
 	var newPathname = "";
@@ -678,6 +693,7 @@ function getURLPath(urlStr){
 }
 
 var actual_JSON;
+var actual_JSON_map;
 
 function load(filename) {
   console.log(filename);
@@ -688,6 +704,17 @@ function load(filename) {
     clearMap();
     parseMap();
   });   
+}
+
+function loadRoute(filename) {
+    console.log(filename);
+    var filename2 = getURLPath(window.location.href) + "/" + filename;
+    loadJSON(filename2, function(response) {
+        actual_JSON_map = JSON.parse(response);
+        console.log(actual_JSON_map);
+        clearRoute();
+        parseRoute();
+    });
 }
 
 function loadJSON(file, callback) {
@@ -714,6 +741,10 @@ function clearMap() {
   lightsx = [];
   lightsy = [];
   lightids = [];
+}
+
+function clearRoute() {
+    route = []
 }
 
 function parseMap() {
@@ -791,6 +822,13 @@ function parseMap() {
     document.getElementById('mpr').value = MPR
 }
 
+function parseRoute() {
+    var routeList = actual_JSON_map["route"];
+    for (var i = 0; i < routeList.length - 1; i++) {
+        route.push({from: routeList[i], to: routeList[i+1]});
+    }
+}
+
 
 function importImage(e){
     var reader = new FileReader();
@@ -838,6 +876,7 @@ function render(){
   drawTool();
   drawLocations();
   drawConnections();
+  drawConnectionsRoute();
   drawWorldObstacles();
   //drawObstacles();
   drawOrigin();
@@ -945,6 +984,18 @@ function drawConnections(){
       ctx.lineTo(getCoords(connections[i].to).x, getCoords(connections[i].to).y);
     }
   ctx.stroke();
+}
+
+function drawConnectionsRoute(){
+    ctx.strokeStyle = '#0000ff';
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    console.log(route);
+    for (var i = 0; i < route.length; i += 1) {
+        ctx.moveTo(getCoords(route[i].from).x , getCoords(route[i].from).y);
+        ctx.lineTo(getCoords(route[i].to).x, getCoords(route[i].to).y);
+    }
+    ctx.stroke();
 }
 
 
