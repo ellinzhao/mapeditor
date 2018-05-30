@@ -92,6 +92,7 @@ var mapLoader = document.getElementById('mapLoader');
 
 var canvas = document.getElementById('imageCanvas');
 var saveButton = document.getElementById("saveMap");
+var attEdit = document.getElementById("attEdit");
 
 var ctx = canvas.getContext('2d');
 var img =null;
@@ -150,10 +151,11 @@ function getWorldObstacleAt(x, y){
   return -1;
 }
 
-function getLocationIndex(label){
-   for (var i = 0; i < locationsl.length; i ++) {
-    if (locationsl[i]==label)
+function getLocationIndex(label) {
+  for (var i = 0; i < locationsl.length; i ++) {
+    if (locationsl[i]==label) {
       return i;
+    }
   }
   return -1;
 }
@@ -661,6 +663,7 @@ function exportMap(el) {
 function importMap(e){
   var reader = new FileReader();
   reader.onload = load(e.target.files[0]["name"]);
+  //render();
 }
 
 function getURLPath(urlStr){
@@ -678,17 +681,16 @@ var actual_JSON;
 
 function load(filename) {
   console.log(filename);
-	var filename2 =getURLPath(window.location.href)+"/"+filename;
+	var filename2 = getURLPath(window.location.href) + "/" + filename;
     loadJSON(filename2, function(response) {  
         actual_JSON = JSON.parse(response);
-//      console.log(actual_JSON);
-        clearMap();
-        parseMap();
-    });   
+      console.log(actual_JSON);
+    clearMap();
+    parseMap();
+  });   
 }
 
-function loadJSON(file, callback) {   
-
+function loadJSON(file, callback) {
     var xobj = new XMLHttpRequest();
     xobj.overrideMimeType("application/json");
     xobj.open('GET', file, true); // Replace 'my_data' with the path to your file
@@ -699,9 +701,9 @@ function loadJSON(file, callback) {
           }
     };
     xobj.send(null);  
- }
+}
  
- function clearMap(){
+function clearMap() {
   origin = [];
  	locationsx = [];
  	locationsy = [];
@@ -712,9 +714,9 @@ function loadJSON(file, callback) {
   lightsx = [];
   lightsy = [];
   lightids = [];
- }
+}
 
- function parseMap (){
+function parseMap() {
     var JSONmap = actual_JSON;
     if (!JSONmap["mpr"]) {
       MPR = 18.5;
@@ -787,19 +789,19 @@ function loadJSON(file, callback) {
       }   
     }
     document.getElementById('mpr').value = MPR
-  }
+}
 
 
 function importImage(e){
     var reader = new FileReader();
-    reader.onload = function(event){
+    reader.onload = function(event) {
         img = new Image();
-        img.onload = function(){
+        img.onload = function() {
             canvas.width = img.width;
             canvas.height = img.height;
             ctx.drawImage(img,0,0);
-            rx=canvas.width/2;
-            ry=canvas.height/2; 
+            rx = canvas.width/2;
+            ry = canvas.height/2; 
             setInterval(update,1000/20);
             canvas.addEventListener('mousemove', moveReporter, false);
             canvas.addEventListener('click',clickReporter,false);
@@ -809,8 +811,7 @@ function importImage(e){
         img.src = event.target.result;
         document.getElementById("displaybackgroundcheck").checked = true;
     }
-    reader.readAsDataURL(e.target.files[0]); 
-
+    reader.readAsDataURL(e.target.files[0]);
 }    
 
 // =============================================================================
@@ -823,7 +824,7 @@ function update(){
   }
   else {
     ctx.fillStyle = "rgb(255, 255, 255)";
-    ctx.fillRect(0, 0, img.width , img.height);
+    ctx.fillRect(0, 0, img.width, img.height);
   }
   render();
   ctx.fillStyle = "rgb(200, 200, 200)";
@@ -838,7 +839,7 @@ function render(){
   drawLocations();
   drawConnections();
   drawWorldObstacles();
-  drawObstacles();
+  //drawObstacles();
   drawOrigin();
   drawWalls();
   if (displaylightscheck.checked)
