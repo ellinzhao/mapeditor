@@ -956,7 +956,7 @@ function drawLocations(){
     ctx.font="10px Georgia";
     ctx.fillText(locationsl[i],locationsx[i]+grid_granularity,locationsy[i]+grid_granularity);
     if (stations.indexOf(locationsl[i])>=0){
-       ctx.drawImage(batteryicon, locationsx[i]-batteryicon.width-Math.floor(grid_granularity/2) , locationsy[i]-Math.floor(grid_granularity/2));
+       ctx.drawImage(batteryicon, locationsx[i]-batteryicon.width-Math.floor(grid_granularity/2), locationsy[i]-Math.floor(grid_granularity/2));
     }
   }
 }
